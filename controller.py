@@ -4,7 +4,7 @@ being it's entry point. It mediates and links the UI and the user input
 with the model logic.
 '''
 from model import Model
-from view.top_view import App, TopView
+from top_view import App, TopView
 
 class Controller:
     def __init__(self) -> None:

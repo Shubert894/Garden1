@@ -9,7 +9,8 @@ import sys
 
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
-from PyQt6 import QtGui 
+from PyQt6 import QtGui
+from editor.edit_area import EditArea 
 
 from view.draw_area import DrawArea
 
@@ -36,9 +37,9 @@ class TopView(QtWidgets.QWidget):
         hbox.setSpacing(0) 
         
         drawArea = DrawArea(controller = self.controller)
-        # editArea = ...
+        editArea = EditArea(controller = self.controller)
         hbox.addWidget(drawArea)
-        # hbox.addWidget(editArea)
+        hbox.addWidget(editArea)
 
 
         self.setLayout(hbox)
