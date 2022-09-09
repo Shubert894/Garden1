@@ -9,12 +9,19 @@ from top_view import App, TopView
 class Controller:
     def __init__(self) -> None:
         self.model = Model()
+        self.tree = self.model.buildTree()
+        self.fNode = None
+
         self.app = App()
         self.view = TopView(self)
         self.app.run()
     
     def getTree(self):
-        return self.model.getTree()
+        return self.tree
+
+    def setFocusNode(self, node):
+        self.fNode = node
+        print(self.fNode)
 
 if __name__ == '__main__':
     controller = Controller()

@@ -9,10 +9,7 @@ import tree_related.tree_drawing_alg as tda
 
 class Model:
     def __init__(self) -> None:
-        self.tree = self.buildTree()
-
-    def getTree(self):
-        return self.tree
+        pass
 
     def buildTree(self):
         tree = tt.generateRandomTree(7,2)

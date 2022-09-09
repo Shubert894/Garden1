@@ -207,6 +207,9 @@ class TreeDrawer:
                 self.focusNode = None
             else:    
                 self.focusNode = clickedNode
+        
+        self.controller.setFocusNode(self.focusNode)
+            
 
     def nodeClicked(self, node, x, y, cR):
         if (node.x - x)**2 + (node.y - y)**2 <= cR**2: 
