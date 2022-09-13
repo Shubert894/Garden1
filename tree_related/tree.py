@@ -19,11 +19,30 @@ import time
 import random
 
 class Node:
-    def __init__(self, parent = None, data = {}, children : list = []) -> None:
-        self.parent = parent
+    def __init__(self, name = 'untitled' ,parent = None, children : list = []) -> None:
         self.id = str(random.randint(100000000, 999999999)) + str(time.time()).replace('.', '')
-        self.data = data
+        self.name = name
+        self.parent = parent
         self.children = children
+
+    def getName(self):
+        return self.name
+
+    def getID(self):
+        return self.id
+
+    def getFileName(self):
+        return f'{self.name}_{self.id}.html'
+    
+    def getParent(self):
+        return self.parent
+    
+    def isIdentical(self, other):
+        if other is None:
+            return False
+        if self.id == other.id:
+            return True
+        return False
 
     def addChild(self, node):
         if self is None:

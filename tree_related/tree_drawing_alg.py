@@ -79,7 +79,6 @@ def firstwalk(v, distance=1.):
         for w in v.children:
             firstwalk(w)
             default_ancestor = apportion(w, default_ancestor, distance)
-        print("finished v =", v.tree, "children")
         execute_shifts(v)
 
         midpoint = ceil((v.children[0].x + v.children[-1].x) / 2)
@@ -132,8 +131,6 @@ def apportion(v, default_ancestor, distance):
 
 def move_subtree(wl, wr, shift):
     subtrees = wr.number - wl.number
-    print(wl.tree, "is conflicted with", wr.tree, 'moving', subtrees, 'shift', shift)
-    #print wl, wr, wr.number, wl.number, shift, subtrees, shift/subtrees
     wr.change -= ceil(shift / subtrees)
     wr.shift += shift
     wl.change += ceil(shift / subtrees)
@@ -143,7 +140,6 @@ def move_subtree(wl, wr, shift):
 def execute_shifts(v):
     shift = change = 0
     for w in v.children[::-1]:
-        print("shift:", w, shift, w.change)
         w.x += shift
         w.mod += shift
         change += w.change
@@ -168,7 +164,6 @@ def second_walk(v, m=0, depth=0, min=None):
     return min
 
 def drawTree(root, depth):
-    print(f'{root.x} , {root.y}')
     for child in root.children:
         drawTree(child, depth+1)
 

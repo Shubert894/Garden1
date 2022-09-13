@@ -54,9 +54,16 @@ class DrawArea(QtWidgets.QWidget):
         if e.type() == QtCore.QEvent.Type.MouseMove:
             if e.buttons() == QtCore.Qt.MouseButton.LeftButton:
                 self.grid.changeGridOnMouseMoveEvent(e.pos().x(), e.pos().y())
-  
+    
     def keyPressEvent(self, e : QtGui.QKeyEvent):
-        pass
+        if e.type() == QtCore.QEvent.Type.KeyPress:
+            match (e.key()):
+                case QtCore.Qt.Key.Key_N:
+                    self.controller.addNode()
+                    print("Key pressed: n")
+                case QtCore.Qt.Key.Key_D:
+                    self.controller.deleteFocusNode()
+                    print("Key pressed: d")
 
 class DrawAreaVariables:
     def __init__(self, scale = 40) -> None:
@@ -210,7 +217,6 @@ class TreeDrawer:
         
         self.controller.setFocusNode(self.focusNode)
             
-
     def nodeClicked(self, node, x, y, cR):
         if (node.x - x)**2 + (node.y - y)**2 <= cR**2: 
             return node

@@ -34,6 +34,8 @@ class EditArea(QWidget):
         self.editToolbar.setIconSize(QSize(20, 20))
         self.editToolbar.setStyleSheet('''QWidget{background-color: "grey";}''')
 
+        self.aSave = QAction(QIcon(os.path.join('assets', 'images', 'save.png')), "", self)
+
         self.aBold = QAction(QIcon(os.path.join('assets', 'images', 'bold.png')), "", self)
         self.aItalic = QAction(QIcon(os.path.join('assets', 'images', 'italic.png')), "", self)
         self.aUnderline = QAction(QIcon(os.path.join('assets', 'images', 'underline.png')), "", self)
@@ -58,6 +60,8 @@ class EditArea(QWidget):
         self.aCenter.triggered.connect(lambda: self.editor.setAlignment(Qt.AlignmentFlag.AlignCenter))
         self.aJusitfy.triggered.connect(lambda: self.editor.setAlignment(Qt.AlignmentFlag.AlignJustify))
 
+        self.aSave.triggered.connect(lambda: self.saveNode(self.controller.fNode))
+
         format_group = QActionGroup(self)
         format_group.setExclusive(True)
         format_group.addAction(self.aLeft)
@@ -69,6 +73,8 @@ class EditArea(QWidget):
         self.aChecklist = QAction(QIcon(os.path.join('assets', 'images', 'checklist.png')), "", self)
         self.aNumbered = QAction(QIcon(os.path.join('assets', 'images', 'numbered.png')), "", self)
    
+        self.editToolbar.addAction(self.aSave)
+
         self.editToolbar.addAction(self.aBold)
         self.editToolbar.addAction(self.aItalic)
         self.editToolbar.addAction(self.aUnderline)
@@ -129,25 +135,48 @@ class EditArea(QWidget):
 
         self.block_signals(self.formatActions, False)
 
+    def dialog_critical(self, s):
+        dlg = QMessageBox(self)
+        dlg.setText(s)
+        dlg.setIcon(QMessageBox.Icon.Critical)
+        dlg.show()
+
     def resizeEvent(self, r: QResizeEvent) -> None:
         height = r.size().height()
         self.setFixedWidth(int(0.8 * height))
         self.updateGeometry()
 
-
-    # def saveNote(self):
+    def openNode(self, node):
+        folderPath = os.path.abspath('notes')
+        path = os.path.join(folderPath, node.getFileName())
         
-    #     path = os.path.abspath('notes')
+        files = os.listdir(folderPath)
+        if node.getFileName() not in files:
+            self.saveNode(node)
+
+        try:
+            with open(path, 'rU') as f:
+                text = f.read()
+
+        except Exception as e:
+            self.dialog_critical(str(e))
+
+        else:
+            self.editor.setText(text)
+
+    def saveNode(self, node):
+        folderPath = os.path.abspath('notes')
+        path = os.path.join(folderPath, node.getFileName())
         
-    #     text = self.editor.toHtml() if splitext(path) in HTML_EXTENSIONS else self.editor.toPlainText()
+        print(path)
+        text = self.editor.toHtml()
 
-    #     try:
-    #         with open(path, 'w') as f:
-    #             f.write(text)
+        try:
+            with open(path, 'w') as f:
+                f.write(text)
 
-    #     except Exception as e:
-    #         self.dialog_critical(str(e))
-    #     print(path)
+        except Exception as e:
+            self.dialog_critical(str(e))
         
 
 

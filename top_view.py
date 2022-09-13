@@ -36,10 +36,10 @@ class TopView(QtWidgets.QWidget):
         hbox.setContentsMargins(0,0,0,0)
         hbox.setSpacing(0) 
         
-        drawArea = DrawArea(controller = self.controller)
-        editArea = EditArea(controller = self.controller)
-        hbox.addWidget(drawArea)
-        hbox.addWidget(editArea)
+        self.drawArea = DrawArea(controller = self.controller)
+        self.editArea = EditArea(controller = self.controller)
+        hbox.addWidget(self.drawArea)
+        hbox.addWidget(self.editArea)
 
 
         self.setLayout(hbox)
