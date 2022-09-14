@@ -21,17 +21,25 @@ class Controller:
 
         self.app.run()
     
-    def getTree(self):
-        return self.tree
 
     def initTree(self):
-        self.tree = self.model.buildBlankTree()
-        self.view.editArea.saveNode(self.tree)
+        treeStructure = self.model.getTreeStructure()
+
+        if treeStructure is None:
+            self.tree = self.model.buildBlankTree()
+            self.view.editArea.saveNode(self.tree)
+            self.model.createStructureFile(self.tree)
+        else:
+            self.tree = self.model.assembleTree(treeStructure)
+
+    def getTree(self):
+        return self.tree
 
     def addNode(self):
         if self.fNode is not None:
             node = self.model.addBlankChildtoFocusNode(self.fNode)
             self.view.editArea.saveNode(node)
+            self.model.createStructureFile(self.tree)
             self.model.updateTree(self.tree)
 
     def deleteFocusNode(self):

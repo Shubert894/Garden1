@@ -25,11 +25,17 @@ class Node:
         self.parent = parent
         self.children = children
 
+        self.x = 0
+        self.y = 0
+
     def getName(self):
         return self.name
 
-    def getID(self):
+    def getId(self):
         return self.id
+    
+    def setId(self, id):
+        self.id = id
 
     def getFileName(self):
         return f'{self.name}_{self.id}.html'
