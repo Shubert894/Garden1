@@ -31,19 +31,29 @@ class TopView(QtWidgets.QWidget):
         self.setWindowTitle('Garden')
         geometry = self.screen().availableGeometry()
         self.setGeometry(geometry)
-        
+        self.sWidth = geometry.width()
+        self.sHeight = geometry.height()
+        print(f'{self.sWidth} - {self.sHeight}')
+
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         hbox.setSpacing(0) 
         
-        self.drawArea = DrawArea(controller = self.controller)
-        self.editArea = EditArea(controller = self.controller)
+        self.drawArea = DrawArea(self.controller, int(self.sWidth*0.5), self.sHeight)
+        self.editArea = EditArea(self.controller, int(self.sWidth*0.5), self.sHeight)
         hbox.addWidget(self.drawArea)
         hbox.addWidget(self.editArea)
 
 
         self.setLayout(hbox)
         self.showMaximized()
+    
+    def resizeEvent(self, r: QtGui.QResizeEvent):
+        self.sWidth = r.size().width()
+        self.sHeight = r.size().height()
+        self.drawArea.drawAreaVars.setWidth(int(self.sWidth/2))
+        self.drawArea.drawAreaVars.setHeight(self.sHeight)
+        self.editArea.setFixedWidth(int(self.sWidth/2))
 
 if __name__ == '__main__':
     pass

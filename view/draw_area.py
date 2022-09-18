@@ -8,34 +8,31 @@ functionality upon receiving an input. Then the TreeDrawer class gets initialize
 and it is in charge of drawing the main tree that it gets from the model through
 the controller, also it performs all the change on a tree following user input.
 '''
+from hashlib import new
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
 from PyQt6 import QtGui
 
 
 class DrawArea(QtWidgets.QWidget):
-    def __init__(self, controller):
+    def __init__(self, controller, width, height):
         super().__init__()
         self.controller = controller
-        self.initDraw()
+        self.initDraw(width, height)
     
-    def initDraw(self):
-        self.drawAreaVars = DrawAreaVariables()
+    def initDraw(self, width, height):
+        self.drawAreaVars = DrawAreaVariables(width, height)
         self.grid = Grid(self.drawAreaVars)
         self.treeDrawer = TreeDrawer(self.drawAreaVars, self.controller)
 
     def paintEvent(self, e: QtGui.QPaintEvent):
         qp = QtGui.QPainter()
         qp.begin(self)
-        #self.grid.drawGrid(qp)
+        self.grid.drawGrid(qp)
         self.treeDrawer.drawTree(qp)
         self.update()
         qp.end()
 
-    def resizeEvent(self, r: QtGui.QResizeEvent):
-        self.drawAreaVars.setWidth(r.size().width())
-        self.drawAreaVars.setHeight(r.size().height())
-    
     def wheelEvent(self, e: QtGui.QWheelEvent):
         self.grid.changeGridOnWheelEvent(e.position().x(), e.position().y(), e.angleDelta().y())
     
@@ -66,10 +63,10 @@ class DrawArea(QtWidgets.QWidget):
                     print("Key pressed: d")
 
 class DrawAreaVariables:
-    def __init__(self, scale = 40) -> None:
+    def __init__(self, sWidth, sHeight, scale = 40) -> None:
         self.scale = scale #the number of pixels that are between two discreet points in the DrawArea space
-        self.width = 0
-        self.height = 0
+        self.width = sWidth
+        self.height = sHeight
         self.originX = 0
         self.originY = 0
         self.circleDiameterAsPercentageOfScale = 0.8
@@ -102,7 +99,7 @@ class DrawAreaVariables:
 
     def setWidth(self, width):
         self.width = width
-    
+
     def setHeight(self, height):
         self.height = height
 
@@ -200,7 +197,28 @@ class TreeDrawer:
         
         for child in node.children:
             self.nodeDraw(child, framePoints, qp)
-    
+
+    def centerTreeOverCenter(self, tWidth, tHeight, rootCoord):
+        sWidth, sHeight = self.dav.width, self.dav.height
+        sCenterX, sCenterY = int(sWidth/2), int(sHeight/2)
+
+        limX, limY = 0.8, 0.8 # percentage of the screen occupied by the tree (centered)
+        newScale = min(int(limX * sWidth / tWidth), int(limY * sHeight / tHeight), 200)
+        newOriginX = int(rootCoord[0] * newScale - sCenterX)
+        newOriginY = int((rootCoord[1] + tHeight/2) * newScale - sCenterY)
+
+        print(newScale)
+        self.dav.setScale(newScale)
+        self.dav.setOriginX(newOriginX)
+        self.dav.setOriginY(newOriginY)
+
+    def centerTreeOverFocus(self, oldX, oldY, newX, newY):
+        oX, oY, scale = self.dav.originX, self.dav.originY, self.dav.scale
+        self.dav.setOriginX(oX + (newX - oldX)*scale)
+        self.dav.setOriginY(oY + (newY - oldY)*scale)
+
+
+
     def changeTreeDrawerOnMouseReleaseEvent(self, x, y):
         if self.localClickX != x and self.localClickY != y:
             return   

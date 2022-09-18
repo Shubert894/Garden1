@@ -47,3 +47,15 @@ def deleteNodeFromStructure(id):
         print('There is no node to be deleted')    
     
     saveStructure(s)
+
+
+def checkTreeStructure():
+    d = getStructure()
+    if d is not None:
+        for id in d:
+            print(f'Id:{id} - {d[id]}')
+
+
+if __name__ == '__main__':
+    checkTreeStructure()
+        

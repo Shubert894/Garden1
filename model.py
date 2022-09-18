@@ -3,6 +3,7 @@ This file contains all the logic and binding to the algorithmic part of the proj
 It makes the connection to "tree_related" folder and draws the bucheim algorithm,
 the tree classes and other primitives from it. 
 '''
+from cmath import inf
 import tree_related.tree as t
 import tree_related.tree_drawing_alg as tda
 import file_related.file_primitives as fp
@@ -44,7 +45,21 @@ class Model:
             return fp.getStructure()
         else:
             return None
-    
+
+    def getTreeParameters(self, node : t.Node):
+        minX, minY = 999999, 999999
+        maxX, maxY = -999999, -999999
+        
+        nodes = [node]
+        while len(nodes) != 0:
+            n = nodes.pop(0)
+            nodes.extend(n.children)
+            minX, maxX = min(minX, n.x), max(maxX, n.x)
+            minY, maxY = min(minY, n.y), max(maxY, n.y)
+
+
+        return maxX-minX + 1, maxY-minY + 1, (node.x, node.y)
+
     def createStructureFile(self, tree):
 
         def introduceNodeToStructure(node, tS):

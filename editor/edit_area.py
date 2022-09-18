@@ -15,14 +15,14 @@ class TextEdit(QTextEdit):
     pass
 
 class EditArea(QWidget):
-    def __init__(self, controller):
+    def __init__(self, controller, width, height):
         super().__init__()
         self.controller = controller
+        self.eWidth = width
+        self.eHeight = height
         self.initEditArea()
     
     def initEditArea(self):
-        self.setMinimumHeight(500)
-
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
         vbox.setSpacing(0)
@@ -60,7 +60,7 @@ class EditArea(QWidget):
         self.aCenter.triggered.connect(lambda: self.editor.setAlignment(Qt.AlignmentFlag.AlignCenter))
         self.aJusitfy.triggered.connect(lambda: self.editor.setAlignment(Qt.AlignmentFlag.AlignJustify))
 
-        self.aSave.triggered.connect(lambda: self.saveNode(self.controller.fNode))
+        self.aSave.triggered.connect(lambda: self.controller.saveNode(self.controller.fNode))
 
         format_group = QActionGroup(self)
         format_group.setExclusive(True)
@@ -141,42 +141,7 @@ class EditArea(QWidget):
         dlg.setIcon(QMessageBox.Icon.Critical)
         dlg.show()
 
-    def resizeEvent(self, r: QResizeEvent) -> None:
-        height = r.size().height()
-        self.setFixedWidth(int(0.8 * height))
-        self.updateGeometry()
 
-    def openNode(self, node):
-        folderPath = os.path.abspath('notes')
-        path = os.path.join(folderPath, node.getFileName())
-        
-        files = os.listdir(folderPath)
-        if node.getFileName() not in files:
-            self.saveNode(node)
-
-        try:
-            with open(path, 'rU') as f:
-                text = f.read()
-
-        except Exception as e:
-            self.dialog_critical(str(e))
-
-        else:
-            self.editor.setText(text)
-
-    def saveNode(self, node):
-        folderPath = os.path.abspath('notes')
-        path = os.path.join(folderPath, node.getFileName())
-        
-        print(path)
-        text = self.editor.toHtml()
-
-        try:
-            with open(path, 'w') as f:
-                f.write(text)
-
-        except Exception as e:
-            self.dialog_critical(str(e))
         
 
 
