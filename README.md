@@ -2,6 +2,5 @@
 
 # TO DO
 #  
-# 1) Autosave
-# 2) Make the editor pretty
+# 1) Make the editor pretty
 #

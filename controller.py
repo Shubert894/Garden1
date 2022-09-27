@@ -17,6 +17,7 @@ class Controller:
         self.app = App()
         self.view = TopView(self)
 
+        #self.view.setFocus()
         self.initTree()
 
         self.app.run()
@@ -33,8 +34,6 @@ class Controller:
             self.tree = self.model.assembleTree(treeStructure)
 
         self.centerTreeOverCenterOfMass()
-        # center tree over the centre of mass
-        # center tree over the focused node
 
     def centerTreeOverCenterOfMass(self):
         tWidth, tHeight, rootCoord = self.model.getTreeParameters(self.tree)
@@ -75,7 +74,6 @@ class Controller:
         
         print(path)
         text = self.view.editArea.editor.toHtml()
-
         try:
             with open(path, 'w') as f:
                 f.write(text)
@@ -102,10 +100,11 @@ class Controller:
     def setFocusNode(self, node):
         # When a node is clicked, the TreeDrawer in draw_area calls this method
         # and sets the focus node in the controller. After that is done, the method
-        # opens the right editor file by tapping into the editArea opneNode method.
+        # opens the right editor file by tapping into the opneNode method.
         
         self.fNode = node
         self.view.editArea.editor.clear()
+        
         if self.fNode is not None:
             self.openNode(node)
 

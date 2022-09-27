@@ -13,6 +13,7 @@ from PyQt6 import QtGui
 from editor.edit_area import EditArea 
 
 from view.draw_area import DrawArea
+import styles
 
 class App:
     def __init__(self) -> None:
@@ -20,6 +21,7 @@ class App:
 
     def run(self):
         sys.exit(self.app.exec())
+
 
 class TopView(QtWidgets.QWidget):
     def __init__(self, controller) -> None:
@@ -35,6 +37,8 @@ class TopView(QtWidgets.QWidget):
         self.sHeight = geometry.height()
         print(f'{self.sWidth} - {self.sHeight}')
 
+        self.setStyleSheet(styles.drawAreaStyle)
+
         hbox = QtWidgets.QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         hbox.setSpacing(0) 
@@ -44,10 +48,10 @@ class TopView(QtWidgets.QWidget):
         hbox.addWidget(self.drawArea)
         hbox.addWidget(self.editArea)
 
-
+        self.setFocus()
         self.setLayout(hbox)
         self.showMaximized()
-    
+       
     def resizeEvent(self, r: QtGui.QResizeEvent):
         self.sWidth = r.size().width()
         self.sHeight = r.size().height()

@@ -8,11 +8,11 @@ functionality upon receiving an input. Then the TreeDrawer class gets initialize
 and it is in charge of drawing the main tree that it gets from the model through
 the controller, also it performs all the change on a tree following user input.
 '''
-from hashlib import new
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
 from PyQt6 import QtGui
 
+import styles
 
 class DrawArea(QtWidgets.QWidget):
     def __init__(self, controller, width, height):
@@ -28,7 +28,7 @@ class DrawArea(QtWidgets.QWidget):
     def paintEvent(self, e: QtGui.QPaintEvent):
         qp = QtGui.QPainter()
         qp.begin(self)
-        self.grid.drawGrid(qp)
+        #self.grid.drawGrid(qp)
         self.treeDrawer.drawTree(qp)
         self.update()
         qp.end()
@@ -71,11 +71,11 @@ class DrawAreaVariables:
         self.originY = 0
         self.circleDiameterAsPercentageOfScale = 0.8
 
-        self.focusPen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2)
-        self.focusBrush = QtGui.QBrush(QtCore.Qt.GlobalColor.blue)
-        self.noFocusPen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 2)
-        self.noFocusBrush = QtGui.QBrush(QtCore.Qt.GlobalColor.green)
-        self.linePen = QtGui.QPen(QtCore.Qt.GlobalColor.black, 4)
+        self.focusPen = QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 2)
+        self.focusBrush = QtGui.QBrush(QtGui.QColor(styles.focusColor))
+        self.noFocusPen = QtGui.QPen(QtGui.QColor(styles.noFocusBorderColor), 2)
+        self.noFocusBrush = QtGui.QBrush(QtGui.QColor(styles.noFocusColor))
+        self.linePen = QtGui.QPen(QtGui.QColor(styles.lineColor), 4)
 
     def getGlobalCoordinates(self, localX ,localY):
         gX = (self.originX + localX) / self.scale

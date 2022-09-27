@@ -1,5 +1,7 @@
 import os
-from typing import Container
+import time
+from editor.debounce import debounce
+import styles
 
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
@@ -20,6 +22,7 @@ class EditArea(QWidget):
         self.controller = controller
         self.eWidth = width
         self.eHeight = height
+        self.lastTimeSaved = time.time()
         self.initEditArea()
     
     def initEditArea(self):
@@ -28,11 +31,19 @@ class EditArea(QWidget):
         vbox.setSpacing(0)
 
         self.editToolbar = QToolBar('Edit')
+        
+        left_spacer = QWidget()
+        left_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        right_spacer = QWidget()
+        right_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+
         self.editor = TextEdit()
         
         #self.editToolbar.setContentsMargins(0,0,0,0)
         self.editToolbar.setIconSize(QSize(20, 20))
-        self.editToolbar.setStyleSheet('''QWidget{background-color: "grey";}''')
+        self.editToolbar.setStyleSheet(styles.toolBarStyle)
+
 
         self.aSave = QAction(QIcon(os.path.join('assets', 'images', 'save.png')), "", self)
 
@@ -73,7 +84,8 @@ class EditArea(QWidget):
         self.aChecklist = QAction(QIcon(os.path.join('assets', 'images', 'checklist.png')), "", self)
         self.aNumbered = QAction(QIcon(os.path.join('assets', 'images', 'numbered.png')), "", self)
    
-        self.editToolbar.addAction(self.aSave)
+        #self.editToolbar.addAction(self.aSave)
+        self.editToolbar.addWidget(left_spacer)
 
         self.editToolbar.addAction(self.aBold)
         self.editToolbar.addAction(self.aItalic)
@@ -84,19 +96,26 @@ class EditArea(QWidget):
         self.editToolbar.addAction(self.aRight)
         self.editToolbar.addAction(self.aJusitfy)
 
-        self.editToolbar.addAction(self.aBullet)
-        self.editToolbar.addAction(self.aChecklist)
-        self.editToolbar.addAction(self.aNumbered)
+        self.editToolbar.addWidget(right_spacer)
 
+        # self.editToolbar.addAction(self.aBullet)
+        # self.editToolbar.addAction(self.aChecklist)
+        # self.editToolbar.addAction(self.aNumbered)
+
+        # hbox = QHBoxLayout()
+        # hbox.addWidget(self.editToolbar)
+        # hbox.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # vbox.addLayout(hbox)
         vbox.addWidget(self.editToolbar)
 
         #self.editor.setContentsMargins(0,0,0,0)
         self.editor.setFrameStyle(0)
-        self.editor.setStyleSheet('''QWidget{background-color: "grey";
-                                        padding: 20px;}''')
-        
+        self.editor.setStyleSheet(styles.editorStyle)
+
+
         self.editor.setAutoFormatting(QTextEdit.AutoFormattingFlag.AutoAll)
-        self.editor.selectionChanged.connect(self.updateFormat)
+        self.editor.selectionChanged.connect(self.onSelectionChanged)
+        self.editor.textChanged.connect(self.onTextChanged)
 
         font = QFont('Times',12)
         self.editor.setFont(font)
@@ -117,6 +136,19 @@ class EditArea(QWidget):
     def block_signals(self, objects, b):
         for o in objects:
             o.blockSignals(b)
+
+    def onSelectionChanged(self):
+        self.updateFormat()
+        print('Selection changed')
+    
+    def onTextChanged(self):
+        if self.editor.hasFocus():
+            self.debouncedSave()
+
+    @debounce(1)
+    def debouncedSave(self):
+        self.controller.saveNode(self.controller.fNode)
+        print('Saved')
 
     def updateFormat(self):
         self.block_signals(self.formatActions, True)
