@@ -8,6 +8,7 @@ functionality upon receiving an input. Then the TreeDrawer class gets initialize
 and it is in charge of drawing the main tree that it gets from the model through
 the controller, also it performs all the change on a tree following user input.
 '''
+from math import sqrt
 from PyQt6 import QtWidgets
 from PyQt6 import QtCore
 from PyQt6 import QtGui
@@ -71,11 +72,11 @@ class DrawAreaVariables:
         self.originY = 0
         self.circleDiameterAsPercentageOfScale = 0.8
 
-        self.focusPen = QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 2)
+        self.focusPen = QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 4)
         self.focusBrush = QtGui.QBrush(QtGui.QColor(styles.focusColor))
         self.noFocusPen = QtGui.QPen(QtGui.QColor(styles.noFocusBorderColor), 2)
         self.noFocusBrush = QtGui.QBrush(QtGui.QColor(styles.noFocusColor))
-        self.linePen = QtGui.QPen(QtGui.QColor(styles.lineColor), 4)
+        self.linePen = QtGui.QPen(QtGui.QColor(styles.lineColor), 3)
 
     def getGlobalCoordinates(self, localX ,localY):
         gX = (self.originX + localX) / self.scale
@@ -170,8 +171,13 @@ class TreeDrawer:
         brpY = self.dav.originY // self.dav.scale + self.dav.height // self.dav.scale + 2
         framePoints = [ulpX, ulpY, brpX, brpY]
         
+        font = qp.font()
+        font.setPixelSize(48)
+        qp.setFont(font)
+
         self.drawLines(self.controller.getTree(), qp)
         self.nodeDraw(self.controller.getTree(), framePoints, qp)
+        self.drawTitles(self.controller.getTree(),qp)
 
     def drawLines(self, node, qp : QtGui.QPainter):
         qp.setPen(self.dav.linePen)
@@ -197,6 +203,26 @@ class TreeDrawer:
         
         for child in node.children:
             self.nodeDraw(child, framePoints, qp)
+
+    def drawTitles(self, node, qp: QtGui.QPainter):
+        qp.setPen(QtGui.QPen(QtGui.QColor(styles.focusColor), 4))
+        
+        nodeLocalX = node.x * self.dav.scale - self.dav.originX
+        nodeLocalY = node.y * self.dav.scale - self.dav.originY
+        cR = self.dav.getCircleRadius()
+
+        ratio = 2
+        height = 2*cR * 0.7
+        width = 2*cR * 0.9
+
+        ulX = nodeLocalX - width/2
+        ulY = nodeLocalY - height/2
+
+        rect = QtCore.QRect(int(ulX),int(ulY),int(width),int(height))
+        qp.drawText(rect, QtCore.Qt.AlignmentFlag.AlignCenter, "MMMMMM")
+
+        for child in node.children:
+            self.drawTitles(child, qp)
 
     def centerTreeOverCenter(self, tWidth, tHeight, rootCoord):
         sWidth, sHeight = self.dav.width, self.dav.height

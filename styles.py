@@ -1,10 +1,10 @@
-toolBarStyle = '''QWidget{background-color: "#666666";}'''
+toolBarStyle = '''QWidget{background-color: "#333333";}'''
 editorStyle = '''QWidget{background-color: "#1e1e1e"; color: "#bbbbbb"; padding: 20px;}'''
-drawAreaStyle = '''QWidget{background-color: "#333333";}'''
+drawAreaStyle = '''QWidget{background-color: "#444444";}'''
 
 
-focusColor = '#4a2c35'
+focusColor = '#f7f7f7'
 focusBorderColor = '#1e1e1e'
-noFocusColor = '#5e5461'
+noFocusColor = '#1e1e1e'
 noFocusBorderColor = '#1e1e1e'
-lineColor = '#414957'
+lineColor = '#1e1e1e'
