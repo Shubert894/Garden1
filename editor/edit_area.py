@@ -41,7 +41,7 @@ class EditArea(QWidget):
         self.editor = TextEdit()
         
         #self.editToolbar.setContentsMargins(0,0,0,0)
-        self.editToolbar.setIconSize(QSize(20, 20))
+        self.editToolbar.setIconSize(QSize(24, 24))
         self.editToolbar.setStyleSheet(styles.toolBarStyle)
 
 

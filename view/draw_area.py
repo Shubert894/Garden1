@@ -72,7 +72,7 @@ class DrawAreaVariables:
         self.originY = 0
         self.circleDiameterAsPercentageOfScale = 0.8
 
-        self.focusPen = QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 4)
+        self.focusPen = QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 3)
         self.focusBrush = QtGui.QBrush(QtGui.QColor(styles.focusColor))
         self.noFocusPen = QtGui.QPen(QtGui.QColor(styles.noFocusBorderColor), 2)
         self.noFocusBrush = QtGui.QBrush(QtGui.QColor(styles.noFocusColor))
@@ -170,10 +170,6 @@ class TreeDrawer:
         brpX = self.dav.originX // self.dav.scale + self.dav.width // self.dav.scale + 2
         brpY = self.dav.originY // self.dav.scale + self.dav.height // self.dav.scale + 2
         framePoints = [ulpX, ulpY, brpX, brpY]
-        
-        font = qp.font()
-        font.setPixelSize(48)
-        qp.setFont(font)
 
         self.drawLines(self.controller.getTree(), qp)
         self.nodeDraw(self.controller.getTree(), framePoints, qp)
@@ -205,24 +201,35 @@ class TreeDrawer:
             self.nodeDraw(child, framePoints, qp)
 
     def drawTitles(self, node, qp: QtGui.QPainter):
-        qp.setPen(QtGui.QPen(QtGui.QColor(styles.focusColor), 4))
+        if node.isIdentical(self.controller.fNode):
+            qp.setPen(QtGui.QPen(QtGui.QColor(styles.focusBorderColor), 4))
+        else:
+            qp.setPen(QtGui.QPen(QtGui.QColor(styles.focusColor), 4))
         
         nodeLocalX = node.x * self.dav.scale - self.dav.originX
         nodeLocalY = node.y * self.dav.scale - self.dav.originY
         cR = self.dav.getCircleRadius()
 
-        ratio = 2
+        title = node.getName()
+        fontSizePre = int(3 * cR / len(title))
+        fontSize = fontSizePre if fontSizePre>=1 else 1
+
+        f = qp.font()
+        f.setBold(True)
+        f.setPixelSize(int(fontSize))
+        qp.setFont(f)
+
         height = 2*cR * 0.7
-        width = 2*cR * 0.9
+        width = 2* cR* 0.7
 
         ulX = nodeLocalX - width/2
         ulY = nodeLocalY - height/2
 
         rect = QtCore.QRect(int(ulX),int(ulY),int(width),int(height))
-        qp.drawText(rect, QtCore.Qt.AlignmentFlag.AlignCenter, "MMMMMM")
+        qp.drawText(rect, QtCore.Qt.AlignmentFlag.AlignCenter | QtCore.Qt.TextFlag.TextWordWrap, title)
 
         for child in node.children:
-            self.drawTitles(child, qp)
+            self.drawTitles(child, qp) 
 
     def centerTreeOverCenter(self, tWidth, tHeight, rootCoord):
         sWidth, sHeight = self.dav.width, self.dav.height
